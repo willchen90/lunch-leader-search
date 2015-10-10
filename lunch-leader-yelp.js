@@ -1,8 +1,39 @@
 if (Meteor.isClient) {
+    
+    Template.searchRestaurant.yelpResults = function(){
+        return Session.get('yelpResults').businesses || "Please search...";
+    };
+
+    Template.searchRestaurant.events({
+    "click .yelp-search-button": function (event) {
+      // Prevent default browser form submit
+      event.preventDefault();
+        
+        var yelpSearchText = $('.yelp-text-button').val();
+     
+        Meteor.call('getYelpSearchResults',yelpSearchText, function(err, response){
+            Session.set('yelpResults', response);
+        });
+    }
+  });
+
+
+    Template.searchRestaurant.events({
+        "click .yelp-result-li": function (event) {
+            // Prevent default browser form submit
+            event.preventDefault();
+            Session.set('selectedRestaurant', this);
+
+        }
+  });
 }
 
+
 if (Meteor.isServer) {
-  YelpQuery = function(search) {
+
+    Meteor.methods({
+
+           getYelpSearchResults: function(search) {
     // Query OAUTH credentials (these are set manually)
     //var auth = Accounts.loginServiceConfiguration.findOne({service: 'yelp'});
 
@@ -46,6 +77,7 @@ if (Meteor.isServer) {
     oauthBinding.accessTokenSecret = auth.accessTokenSecret;
     var headers = oauthBinding._buildHeader();
     return oauthBinding._call('GET', 'http://api.yelp.com/v2/search', headers, parameters).data;
-  };
-  console.log(YelpQuery("italian"));
+    }
+
+     })
 }

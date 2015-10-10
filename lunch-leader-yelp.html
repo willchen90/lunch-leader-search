@@ -12,9 +12,21 @@
 
 <template name="searchRestaurant">
     <div class="ui input focus">
-  <input type="text" placeholder="Search...">
+  <input type="text" class="yelp-text-button" placeholder="Search...">
 </div>
-  <button class="ui primary button">
+  <button class="ui primary button yelp-search-button">
   Save
     </button>
+    <ul>
+      {{#each yelpResults}}
+        {{> yelpRestaurant}}
+      {{/each}}
+    </ul>
+</template>
+
+
+<template name="yelpRestaurant">
+    <li class="yelp-result-li">
+      {{name}}{{location.address}}{{location.city}}
+    </li>
 </template>
